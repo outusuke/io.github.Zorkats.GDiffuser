@@ -1,4 +1,5 @@
 name: CI
+
 on:
   workflow_dispatch:
   push:
@@ -45,18 +46,12 @@ jobs:
           files: G-Diffuser.flatpak
           generate_release_notes: true
           body: |
-            Unofficial Flatpak bundle of [G-Diffuser](https://github.com/Zorkats/G-Diffuser) (F-Zero X PC port).
-            No game content is included. You need your own US rev0 ROM and 64DD disk image.
+            Unofficial Flatpak bundle of G-Diffuser (F-Zero X PC port).
+            You need your own US rev0 ROM and 64DD disk image.
 
-            **First install:**
-```bash
-            flatpak install --user G-Diffuser.flatpak
-            flatpak run io.github.Zorkats.GDiffuser
-```
+            First install:
+              flatpak install --user G-Diffuser.flatpak
+              flatpak run io.github.Zorkats.GDiffuser
 
-            **Already installed? Update:**
-```bash
-            flatpak install --user --reinstall G-Diffuser.flatpak
-```
-
-            Put your ROM and disk image in `~/.var/app/io.github.Zorkats.GDiffuser/data/g-diffuser/`.
+            Already installed? Update:
+              flatpak install --user --reinstall G-Diffuser.flatpak

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=G-Diffuser
+Comment=Unofficial PC port of F-Zero X
+Exec=g-diffuser-launch
+Icon=io.github.Zorkats.GDiffuser
+Categories=Game;
