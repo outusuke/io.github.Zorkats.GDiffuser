@@ -9,30 +9,32 @@ finish-args:
   - --socket=x11
   - --socket=wayland
   - --socket=pulseaudio
-  - --device=all          # GPU + gamepads
-  - --share=network       # only needed for Discord Rich Presence; remove if unwanted
-  - --filesystem=xdg-download:ro   # so you can pick your ROM / 64DD disk image
+  - --device=all
+  - --filesystem=xdg-download:ro
 
 modules:
   - name: g-diffuser
     buildsystem: simple
     build-commands:
       - mkdir -p /app/lib/g-diffuser
-      - cp -a G-Diffuser/. /app/lib/g-diffuser/   # adjust to the archive's actual layout
-      - chmod +x /app/lib/g-diffuser/G-Diffuser   # adjust to the actual binary name
+      - cp -a src/. /app/lib/g-diffuser/
+      - find /app/lib/g-diffuser -maxdepth 2 -type f -name 'G-Diffuser' -exec chmod +x {} +
       - install -Dm755 g-diffuser-launch /app/bin/g-diffuser-launch
       - install -Dm644 io.github.Zorkats.GDiffuser.desktop -t /app/share/applications
     sources:
       - type: archive
-        url: https://github.com/Zorkats/G-Diffuser/releases/download/v1.1.0/<LINUX_ASSET>.tar.gz
+        url: https://github.com/Zorkats/G-Diffuser/releases/download/v1.1.0/G-Diffuser-v1.1.0-linux-x64.tar.gz
         sha256: 5b13b89323344bd9a65ba51fe48dfb52c76e84392e12c3e9873e557c359992a4
+        strip-components: 0
+        dest: src
       - type: script
         dest-filename: g-diffuser-launch
         commands:
           - D="${XDG_DATA_HOME:-$HOME/.local/share}/g-diffuser"
           - mkdir -p "$D"
-          - cp -a /app/lib/g-diffuser/. "$D/"   # refresh binary, keeps your roms/saves
-          - cd "$D"
+          - cp -a /app/lib/g-diffuser/. "$D/"
+          - BIN=$(find "$D" -maxdepth 2 -type f -name 'G-Diffuser' | head -n 1)
+          - cd "$(dirname "$BIN")"
           - exec ./G-Diffuser "$@"
       - type: file
         path: io.github.Zorkats.GDiffuser.desktop
