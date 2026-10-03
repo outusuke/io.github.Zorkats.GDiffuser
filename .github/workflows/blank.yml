@@ -1,11 +1,6 @@
 name: CI
 on:
   workflow_dispatch:
-    inputs:
-      upstream_ref:
-        description: 'Zorkats/G-Diffuser branch, tag or full commit SHA to build'
-        required: false
-        default: 'main'
   push:
     tags:
       - 'v*'
@@ -15,43 +10,17 @@ jobs:
   build:
     name: "Build Flatpak"
     runs-on: ubuntu-latest
-    timeout-minutes: 120
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
       options: --privileged
     steps:
       - uses: actions/checkout@v4
-
-      - name: Pin upstream G-Diffuser commit
-        shell: bash
-        env:
-          UPSTREAM_REF: ${{ inputs.upstream_ref }}
-        run: |
-          set -euo pipefail
-          REF="${UPSTREAM_REF:-main}"
-          REPO=https://github.com/Zorkats/G-Diffuser.git
-          if [[ "$REF" =~ ^[0-9a-f]{40}$ ]]; then
-            SHA="$REF"
-          else
-            # Peeled entry (^{}) comes last for annotated tags, so tail -n1 handles both cases.
-            SHA=$(git ls-remote "$REPO" "$REF" "$REF^{}" | tail -n1 | cut -f1)
-          fi
-          [ -n "$SHA" ] || { echo "Could not resolve '$REF' in $REPO" >&2; exit 1; }
-          echo "Building upstream $REF -> $SHA"
-          sed -i -E "s/^([[:space:]]*commit:[[:space:]]*).*/\1$SHA/" io.github.Zorkats.GDiffuser.yml
-          sed -i -E "s/<release version=\"[^\"]*\" date=\"[^\"]*\"\/>/<release version=\"git-${SHA:0:7}\" date=\"$(date -u +%F)\"\/>/" io.github.Zorkats.GDiffuser.metainfo.xml
-          grep -n 'commit:' io.github.Zorkats.GDiffuser.yml
-          grep -n '<release ' io.github.Zorkats.GDiffuser.metainfo.xml
-
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: G-Diffuser.flatpak
           manifest-path: io.github.Zorkats.GDiffuser.yml
-          branch: stable
           cache-key: flatpak-builder-${{ github.sha }}
-          upload-artifact: false
-
       - name: Upload temporary artifact
         uses: actions/upload-artifact@v4
         with:
@@ -70,25 +39,24 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: flatpak-bundle
-
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: G-Diffuser.flatpak
           generate_release_notes: true
           body: |
-            Unofficial Flatpak bundle for G-Diffuser (F-Zero X PC port).
-            No game data is included. You must supply your own legally obtained files in
-            `~/.var/app/io.github.Zorkats.GDiffuser/data/G-Diffuser/`:
-            `baserom.us.rev0.z64`, `baserom.translated.ek.ndd` and `N64DDIPLROM.n64`.
+            Unofficial Flatpak bundle of [G-Diffuser](https://github.com/Zorkats/G-Diffuser) (F-Zero X PC port).
+            No game content is included. You need your own US rev0 ROM and 64DD disk image.
 
             **First install:**
-            ```bash
+```bash
             flatpak install --user G-Diffuser.flatpak
             flatpak run io.github.Zorkats.GDiffuser
-            ```
+```
 
-            **Already installed? Update to this version:**
-            ```bash
+            **Already installed? Update:**
+```bash
             flatpak install --user --reinstall G-Diffuser.flatpak
-            ```
+```
+
+            Put your ROM and disk image in `~/.var/app/io.github.Zorkats.GDiffuser/data/g-diffuser/`.
