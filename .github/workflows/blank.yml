@@ -1,0 +1,62 @@
+name: CI
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+      - '*.*.*'
+
+jobs:
+  build:
+    name: "Build Flatpak"
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: G-Diffuser.flatpak
+          manifest-path: io.github.Zorkats.GDiffuser.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+      - name: Upload temporary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flatpak-bundle
+          path: G-Diffuser.flatpak
+
+  release:
+    name: "Publish Release"
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: flatpak-bundle
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: G-Diffuser.flatpak
+          generate_release_notes: true
+          body: |
+            Unofficial Flatpak bundle of [G-Diffuser](https://github.com/Zorkats/G-Diffuser) (F-Zero X PC port).
+            No game content is included. You need your own US rev0 ROM and 64DD disk image.
+
+            **First install:**
+```bash
+            flatpak install --user G-Diffuser.flatpak
+            flatpak run io.github.Zorkats.GDiffuser
+```
+
+            **Already installed? Update:**
+```bash
+            flatpak install --user --reinstall G-Diffuser.flatpak
+```
+
+            Put your ROM and disk image in `~/.var/app/io.github.Zorkats.GDiffuser/data/g-diffuser/`.
