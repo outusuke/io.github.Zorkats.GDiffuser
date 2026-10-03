@@ -1,6 +1,6 @@
 app-id: io.github.Zorkats.GDiffuser
 runtime: org.freedesktop.Platform
-runtime-version: '24.08'
+runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 command: g-diffuser-launch
 
@@ -25,7 +25,7 @@ modules:
     sources:
       - type: archive
         url: https://github.com/Zorkats/G-Diffuser/releases/download/v1.1.0/<LINUX_ASSET>.tar.gz
-        sha256: <SHA256>
+        sha256: 5b13b89323344bd9a65ba51fe48dfb52c76e84392e12c3e9873e557c359992a4
       - type: script
         dest-filename: g-diffuser-launch
         commands:
