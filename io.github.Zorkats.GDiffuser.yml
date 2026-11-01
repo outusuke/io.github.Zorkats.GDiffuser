@@ -23,8 +23,8 @@ modules:
       - install -Dm644 io.github.Zorkats.GDiffuser.desktop -t /app/share/applications
     sources:
       - type: archive
-        url: https://github.com/Zorkats/G-Diffuser/releases/download/v1.1.0/G-Diffuser-v1.1.0-linux-x64.tar.gz
-        sha256: 5b13b89323344bd9a65ba51fe48dfb52c76e84392e12c3e9873e557c359992a4
+        url: https://github.com/Zorkats/G-Diffuser/releases/download/v1.2.0/G-Diffuser-v1.2.0-linux-x64.tar.gz
+        sha256: 5ad538873dbb339acb8bc8ba47a952596a85619e21839122b956a0b031429da1
         strip-components: 0
         dest: src
       - type: script
