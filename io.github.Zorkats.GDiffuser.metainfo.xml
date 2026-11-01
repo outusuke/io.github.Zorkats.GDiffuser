@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.Zorkats.GDiffuser</id>
+  <name>G-Diffuser</name>
+  <summary>Unofficial PC port of F-Zero X</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <developer id="io.github.zorkats">
+    <name>Zorkats</name>
+  </developer>
+  <description>
+    <p>G-Diffuser is an unofficial PC port of F-Zero X with the 64DD Expansion Kit, including Course Edit.</p>
+    <p>No game files are included. You must supply your own legally obtained F-Zero X US rev0 ROM, the Expansion Kit disk image and a 64DD IPL ROM, and drag them onto the first-boot window.</p>
+    <p>This is an unofficial Flatpak packaging of the upstream Linux release.</p>
+  </description>
+  <launchable type="desktop-id">io.github.Zorkats.GDiffuser.desktop</launchable>
+  <url type="homepage">https://github.com/Zorkats/G-Diffuser</url>
+  <url type="bugtracker">https://github.com/outusuke/io.github.Zorkats.GDiffuser/issues</url>
+  <categories>
+    <category>Game</category>
+    <category>ArcadeGame</category>
+  </categories>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="1.2.0" date="2026-10-31"/>
+  </releases>
+</component>

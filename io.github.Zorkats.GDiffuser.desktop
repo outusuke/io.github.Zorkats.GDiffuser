@@ -4,4 +4,6 @@ Name=G-Diffuser
 Comment=Unofficial PC port of F-Zero X
 Exec=g-diffuser-launch
 Icon=io.github.Zorkats.GDiffuser
-Categories=Game;
+Terminal=false
+Categories=Game;ArcadeGame;
+Keywords=F-Zero;F-Zero X;racing;N64;

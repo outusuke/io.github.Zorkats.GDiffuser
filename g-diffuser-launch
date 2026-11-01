@@ -1,0 +1,57 @@
+#!/bin/sh
+# G-Diffuser Flatpak launcher.
+#
+# G-Diffuser is portable by design: it treats the folder holding its own executable as its data
+# directory (saves/, ghosts/, config, the extracted fzerox.o2r, mods/ ...), and /app is read-only.
+# So the program files are installed into a writable folder, and the game runs from there.
+#
+#   ~/.var/app/io.github.Zorkats.GDiffuser/data/g-diffuser/
+#
+# That install is refreshed only when the Flatpak itself ships a new build (.install-id differs).
+# Only files listed in .managed are ever replaced or removed; everything else in the folder
+# (saves, ROM data, config, mods, your shader presets) belongs to the user and is never touched.
+set -eu
+
+SRC=/app/lib/g-diffuser
+DATA="${XDG_DATA_HOME:-$HOME/.local/share}/g-diffuser"
+
+# Reject list entries that could escape $DATA (the lists are ours, but cheap to be safe).
+safe_entry() {
+    case "$1" in
+        '' | /* | .. | ../* | */.. | */../*) return 1 ;;
+    esac
+}
+
+mkdir -p "$DATA"
+
+# One-time migration from the old layout, where the whole tarball (including its top-level
+# G-Diffuser/ folder) was copied under $DATA, i.e. $DATA/G-Diffuser/{G-Diffuser,saves,...}.
+OLD="$DATA/G-Diffuser"
+if [ -d "$OLD" ] && [ -f "$OLD/G-Diffuser" ]; then
+    for f in "$OLD"/* "$OLD"/.[!.]*; do
+        [ -e "$f" ] || continue
+        [ -e "$DATA/${f##*/}" ] || mv "$f" "$DATA/${f##*/}"
+    done
+    rm -rf "$OLD"
+fi
+
+if [ "$(cat "$DATA/.install-id" 2>/dev/null || true)" != "$(cat "$SRC/.install-id")" ]; then
+    # Remove what the previous version installed (stale files), then install this one.
+    if [ -f "$DATA/.managed" ]; then
+        while IFS= read -r entry; do
+            safe_entry "$entry" || continue
+            rm -rf "${DATA:?}/$entry"
+        done < "$DATA/.managed"
+    fi
+    while IFS= read -r entry; do
+        safe_entry "$entry" || continue
+        mkdir -p "$(dirname "$DATA/$entry")"
+        rm -rf "${DATA:?}/$entry"   # unlink first: copying over a running executable fails
+        cp -a "$SRC/$entry" "$DATA/$entry"
+    done < "$SRC/.managed"
+    cp "$SRC/.managed" "$DATA/.managed"
+    cp "$SRC/.install-id" "$DATA/.install-id"   # written last, so an interrupted install retries
+fi
+
+cd "$DATA"
+exec ./G-Diffuser "$@"
