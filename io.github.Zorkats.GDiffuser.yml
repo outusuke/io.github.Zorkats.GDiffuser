@@ -11,12 +11,7 @@ finish-args:
   - --socket=pulseaudio
   # Gamepads. (--device=input would be tighter but needs Flatpak >= 1.15.6.)
   - --device=all
-  # The Linux build has no file picker: you drag & drop the ROM / disk image / IPL onto the
-  # first-boot window. Drops carry host paths, so the sandbox must be able to read them.
-  # For other locations: flatpak override --user --filesystem=/path:ro io.github.Zorkats.GDiffuser
-  - --filesystem=xdg-download:ro
-  # No --share=network on purpose: the in-game updater would replace files that the Flatpak
-  # manages. Updates come through Flatpak.
+
 
 modules:
   - name: g-diffuser
@@ -34,12 +29,12 @@ modules:
       - install -Dm644 gdiffuser-icon.png /app/share/icons/hicolor/192x192/apps/io.github.Zorkats.GDiffuser.png
     sources:
       - type: archive
-        url: https://github.com/Zorkats/G-Diffuser/releases/download/v1.2.0/G-Diffuser-v1.2.0-linux-x64.tar.gz
-        sha256: 5ad538873dbb339acb8bc8ba47a952596a85619e21839122b956a0b031429da1
+        url: https://github.com/Zorkats/G-Diffuser/releases/download/v1.2.3/G-Diffuser-v1.2.3-linux-x64.tar.gz
+        sha256: 8ee7086bb255a350539572e6b148db46ffd4dce9f5d5e518a67427446b51f2bb
         strip-components: 1   # drop the tarball's top-level G-Diffuser/ folder
         dest: src
       - type: file
-        url: https://raw.githubusercontent.com/Zorkats/G-Diffuser/v1.2.0/assets/branding/gdiffuser-icon.png
+        url: https://raw.githubusercontent.com/Zorkats/G-Diffuser/v1.2.3/assets/branding/gdiffuser-icon.png
         sha256: 8cec7510c0726535dde5dee5a0e118176cf900930cfc293912855bb914df7213
         dest-filename: gdiffuser-icon.png
       - type: file
